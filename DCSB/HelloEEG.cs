@@ -22,7 +22,7 @@ namespace testprogram {
         static double mental_eff_baseline, mental_eff_cur, mental_eff_change;
         static bool mental_eff_first;
 
-        public static void Main(string[] args) {
+        public static void M1ain(string[] args) {
 
             Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             if (assembly != null)
