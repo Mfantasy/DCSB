@@ -238,23 +238,20 @@ namespace DCSB
                 //特殊处理
                 if (tgParser.ParsedData[i].ContainsKey("PoorSignal"))
                 {
-                    // NOTE: this doesn't work well with BMD sensors Dual Headband or CardioChip
-
+                    //每30次数据或信号变化时监测一次信号,监测次数归零,如果信号变为0,说明连接稳定,否则说明信号突然变差.                    
                     rcv_poorSignal = (byte)tgParser.ParsedData[i]["PoorSignal"];
                     dm.PoorSignal = tgParser.ParsedData[i]["PoorSignal"].ToString();
                     if (rcv_poorSignal != rcv_poorSignal_last || rcv_poorSig_cnt >= 30)
-                    {
-                        // when there is a change of state OR every 30 reports
+                    {                        
                         rcv_poorSig_cnt = 0; // reset counter
                         rcv_poorSignal_last = rcv_poorSignal;
                         if (rcv_poorSignal == 0)
                         {
-                            // signal is good, we are connected to a subject
-                            Console.WriteLine("SIGNAL: we have good contact with the subject");
+                            this.Invoke(new Action(() => toolStripStatusLabel1.Text = ""));
                         }
                         else
                         {
-                            Console.WriteLine("SIGNAL: is POOR: " + rcv_poorSignal);
+                            this.Invoke(new Action(() => toolStripStatusLabel1.Text = string.Format("连接不稳定,信号值:{0}",rcv_poorSignal)));                            
                         }
                     }
                     else rcv_poorSig_cnt++;
@@ -263,16 +260,16 @@ namespace DCSB
                 if (tgParser.ParsedData[i].ContainsKey("MentalEffort"))
                 {
                     mental_eff_cur = (Double)tgParser.ParsedData[i]["MentalEffort"];
-                    //dm.MentalEffort = tgParser.ParsedData[i]["MentalEffort"].ToString();
+                    //先取实际值
+                    dm.MentalEffort = mental_eff_cur.ToString();
+
                     if (mental_eff_first)
                     {
                         mental_eff_first = false;
                     }
                     else
                     {
-                        /*
-                         * calculate the percentage change from the previous sample
-                         */
+                        //计算变化的百分比                                        
                         mental_eff_change = calcPercentChange(mental_eff_baseline, mental_eff_cur);
                         if (mental_eff_change > 500.0 || mental_eff_change < -500.0)
                         {
@@ -280,8 +277,7 @@ namespace DCSB
                         }
                         else
                         {
-                            Console.WriteLine("\t\tMental Effort: " + mental_eff_change + " %");
-                            dm.MentalEffort = mental_eff_change.ToString() + " %";
+                            Console.WriteLine("\t\tMental Effort: " + mental_eff_change + " %");                            
                         }
                     }
                     mental_eff_baseline = mental_eff_cur;
@@ -290,15 +286,13 @@ namespace DCSB
                 if (tgParser.ParsedData[i].ContainsKey("TaskFamiliarity"))
                 {
                     task_famil_cur = (Double)tgParser.ParsedData[i]["TaskFamiliarity"];
+                    dm.TaskFamiliarity = task_famil_cur.ToString();
                     if (task_famil_first)
                     {
                         task_famil_first = false;
                     }
                     else
-                    {
-                        /*
-                         * calculate the percentage change from the previous sample
-                         */
+                    {                     
                         task_famil_change = calcPercentChange(task_famil_baseline, task_famil_cur);
                         if (task_famil_change > 500.0 || task_famil_change < -500.0)
                         {
@@ -306,23 +300,19 @@ namespace DCSB
                         }
                         else
                         {
-                            Console.WriteLine("\t\tTask Familiarity: " + task_famil_change + " %");
-                            dm.TaskFamiliarity = task_famil_change.ToString() + " %";
+                            Console.WriteLine("\t\tTask Familiarity: " + task_famil_change + " %");                         
                         }
                     }
                     task_famil_baseline = task_famil_cur;
-                }
-           
-            
-             
-               
-                
-               
-
-                 
-                                                
+                }                                                                                                                                                   
             }
-            
+            if (!string.IsNullOrWhiteSpace(dm.PoorSignal) && dm.PoorSignal.Trim() == "0")
+            {
+                if (!string.IsNullOrWhiteSpace(dm.Attention) && !string.IsNullOrWhiteSpace(dm.Meditation))
+                {
+                    home.CurrentNBList.Add(dm);
+                }
+            }            
             DAL.SaveData(dm);
         }
 
@@ -357,7 +347,7 @@ namespace DCSB
             if (Convert.ToInt32(dcObjExist) == 0)
             {
                 string createSql = @"CREATE TABLE T_DCData(CK varchar(50),Eng varchar(50), Chn varchar(50))";
-                int res = SqlLiteHelper.ExecuteNonQuery(db, createSql);
+                int res = SqlLiteHelper.ExecuteNonQuery(createSql);
             }
             home = new HomePage();
             datashow = new NBDataShow();
@@ -393,7 +383,7 @@ namespace DCSB
                 MessageBox.Show(string.Format("导入成功!已导入记录{0}条",dlist.Count));
                 if (dlist.Count > 0)
                 {
-                    home.LoadDC(dlist);
+                    home.LoadCK(dlist);
                 }
             }
             
@@ -401,17 +391,17 @@ namespace DCSB
 
         private void 模糊词库ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //List<DCDataModel> dlist = DAL.GetMHDList();
+            home.ShowMH();
         }
 
         private void 生词词库ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //List<DCDataModel> dlist = DAL.GetSCDList();
+            home.ShowSC();
         }
 
         private void 熟悉词库ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //List<DCDataModel> dlist = DAL.GetSXDList();
+            home.ShowSX();
         }
 
         private void 串口配置ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -435,7 +425,6 @@ namespace DCSB
         {
             //记录数据表
             datashow.BringToFront();
-
         }
 
         private void 退出ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -449,7 +438,7 @@ namespace DCSB
         private void 帮助ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string fname = ConfigurationManager.AppSettings["helper"];
-            if (!string.IsNullOrWhiteSpace(fname))
+            if (!string.IsNullOrWhiteSpace(fname) && File.Exists(fname))
             {
                 Process.Start(fname);
             }

@@ -17,16 +17,16 @@ namespace DCSB
 {
     class Utils
     {
-        public static string GetUserPath()
-        {
-            string dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            if (!Directory.Exists(Path.Combine(dir, @"DCSB\")))
-            {
-                Directory.CreateDirectory(Path.Combine(dir, @"DCSB\"));
-            }
-            return Path.Combine(dir, @"msoft\config\");
-        }
+        public static Object lockObj = new object();
 
+        public static void WriteLog(string logInfo)
+        {
+            lock (lockObj)
+            {
+                File.AppendAllText("log.txt", DateTime.Now.ToString() + "\r\n logInfo:" + logInfo + "\r\n");
+            }
+        }
+  
         public static void ExcelTest()
         {
             HSSFWorkbook workBook = new HSSFWorkbook();

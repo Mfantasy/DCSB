@@ -139,7 +139,7 @@ namespace DCSB
             }
             sheet = workbook.GetSheetAt(0);            
             
-            for (int i = 1; i < sheet.LastRowNum; i++)
+            for (int i = 0; i < sheet.LastRowNum+1; i++)
             {
                 IRow row = sheet.GetRow(i);
                 if (row == null)
@@ -158,10 +158,17 @@ namespace DCSB
             return dlist;
         }
 
+        internal static void UpdateDC(DCDataModel dc)
+        {
+            string updateSql = string.Format("UPDATE T_DCData SET CK='{0}' WHERE Eng='{1}'",dc.CK,dc.English);
+            SqlLiteHelper.ExecuteNonQuery(updateSql);
+        }
+
         internal static void SaveDC(DCDataModel currentDC)
         {
             string insertSql = string.Format("INSERT INTO T_DCData (CK,Eng,Chn) VALUES('{0}','{1}','{2}')", currentDC.CK, currentDC.English,currentDC.Chinese);
             SqlLiteHelper.ExecuteNonQuery(insertSql);
         }
+
     }
 }

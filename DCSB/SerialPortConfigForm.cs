@@ -15,6 +15,13 @@ namespace DCSB
         public SerialPortConfigForm()
         {
             InitializeComponent();
+            this.Load += (S,E)=> {
+                comboBox2.SelectedItem = "57600";
+                comboBox3.SelectedItem = "none";
+                comboBox4.SelectedItem = "1";
+                comboBox5.SelectedItem = "none";
+                comboBox6.SelectedItem = "8";
+            };
         }
    
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
