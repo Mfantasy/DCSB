@@ -30,7 +30,8 @@ namespace DCSB
         public MainForm()
         {
             InitializeComponent();
-            Init();                  
+            Init();
+            Console.WriteLine("OK");
             this.FormClosing += (S, E) => { if (connector != null) connector.Close(); };
                   
             Thread th = new Thread(() => {
