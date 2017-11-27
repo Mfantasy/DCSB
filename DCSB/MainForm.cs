@@ -25,14 +25,12 @@ namespace DCSB
         double task_famil_baseline, task_famil_cur, task_famil_change;
         bool task_famil_first;
         double mental_eff_baseline, mental_eff_cur, mental_eff_change;
-        bool mental_eff_first;
-        //string db = Path.Combine(Utils.GetUserPath(), "nbdata.db");
-        
+        bool mental_eff_first;                
            
         public MainForm()
         {
             InitializeComponent();
-            Init();
+            Init();                  
             this.FormClosing += (S, E) => { if (connector != null) connector.Close(); };
                   
             Thread th = new Thread(() => {
@@ -55,43 +53,22 @@ namespace DCSB
                 if (MyAssembly.FullName.Contains("ThinkGear"))
                     Console.WriteLine(MyAssembly.FullName);
             }
-
-
-            Console.WriteLine("----------");
-            if (golfZoneDemo) Console.WriteLine("Hello Golfer!");
-            else Console.WriteLine("Hello EEG!");
-            Console.WriteLine("----------");
-
+         
             // Initialize a new Connector and add event handlers
             connector = new Connector();
             connector.DeviceConnected += new EventHandler(OnDeviceConnected);
             connector.DeviceConnectFail += new EventHandler(OnDeviceFail);
             connector.DeviceValidating += new EventHandler(OnDeviceValidating);
-
-            // Scan for devices
-            // add this one to scan 1st
-            //connector.ConnectScan("COM40");
-            connector.ConnectScan("COM17");
-
-            //start the mental effort and task familiarity calculations
-            if (golfZoneDemo)
-            {
-                connector.setMentalEffortEnable(false);
-                connector.setTaskFamiliarityEnable(false);
-                connector.setBlinkDetectionEnabled(false);
-            }
-            else
-            {
+    
+                connector.ConnectScan("COM17");
+                                                
                 connector.enableTaskDifficulty(); //depricated
                 connector.enableTaskFamiliarity(); //depricated
-
                 connector.setMentalEffortRunContinuous(true);
                 connector.setMentalEffortEnable(true);
                 connector.setTaskFamiliarityRunContinuous(true);
                 connector.setTaskFamiliarityEnable(true);
-
-                connector.setBlinkDetectionEnabled(true);
-            }
+                connector.setBlinkDetectionEnabled(true);        
             task_famil_baseline = task_famil_cur = task_famil_change = 0.0;
             task_famil_first = true;
             mental_eff_baseline = mental_eff_cur = mental_eff_change = 0.0;
@@ -118,9 +95,10 @@ namespace DCSB
         void OnDeviceConnected(object sender, EventArgs e)
         {
             Connector.DeviceEventArgs de = (Connector.DeviceEventArgs)e;
-
-            Console.WriteLine("Device found on: " + de.Device.PortName);
-            tLabel1.Text = string.Format("已连接:{0}",de.Device.PortName);
+            this.Invoke(new Action(() =>
+            {
+                tLabel1.Text = string.Format("已连接:{0}", de.Device.PortName);
+            }));
             de.Device.DataReceived += new EventHandler(OnDataReceived);
         }
 
@@ -129,8 +107,16 @@ namespace DCSB
          */
         void OnDeviceFail(object sender, EventArgs e)
         {
-            Console.WriteLine("No devices found! :(");
-            tLabel1.Text = "未找到设备！";
+            try
+            {
+                this.Invoke(new Action(() =>
+                {
+                    tLabel1.Text = "未找到设备！";
+                }));
+            }
+            catch (Exception ex)
+            {                
+            }        
         }
 
         /**
@@ -191,8 +177,7 @@ namespace DCSB
                 }
                 //不等于0?       
                 if (tgParser.ParsedData[i].ContainsKey("Attention"))
-                {  
-                                                              
+                {                                                                
                    dm.Attention = tgParser.ParsedData[i]["Attention"].ToString();                 
                 }
                 if (tgParser.ParsedData[i].ContainsKey("Meditation"))
@@ -313,7 +298,7 @@ namespace DCSB
                     home.CurrentNBList.Add(dm);
                 }
             }            
-            DAL.SaveData(dm);
+            DAL.SaveNBData(dm);
         }
 
         double calcPercentChange(double baseline, double current)
@@ -351,18 +336,23 @@ namespace DCSB
             }
             home = new HomePage();
             datashow = new NBDataShow();
+            dataview = new NBDataView();
+            dataview.Parent = this;
             home.Parent = this;
             datashow.Parent = this;
+            dataview.Dock = DockStyle.Fill;
             home.Dock = DockStyle.Fill;
             datashow.Dock = DockStyle.Fill;
             home.Visible = true;
             datashow.Visible = true;
+            dataview.Visible = true;
 
             home.BringToFront();            
         }
 
         HomePage home;
         NBDataShow datashow;
+        NBDataView dataview;
         private void toolStripMenuItem5_Click(object sender, EventArgs e)
         {
             //单词识别
@@ -411,9 +401,9 @@ namespace DCSB
 
         private void mindviewerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //曲线图
-            //new NBDataModel() {  Attention="", DateTime="", PoorSignal="", Meditation="",   TaskFamiliarity="", MentalEffort=""}
-
+            //曲线图            
+            dataview.GetData();
+            dataview.BringToFront();   
         }
 
         private void toolStripMenuItem4_Click(object sender, EventArgs e)

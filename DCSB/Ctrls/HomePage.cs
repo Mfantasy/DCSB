@@ -12,9 +12,7 @@ using System.Threading;
 namespace DCSB
 {
     public partial class HomePage : UserControl
-    {
-        //当PoorSigna>30 时，状态栏提示：没有正确配戴设备！请检查！        
-  
+    { 
         List<DCDataModel> totalck = new List<DCDataModel>();
         List<DCDataModel> scck = new List<DCDataModel>();
         List<DCDataModel> mhck = new List<DCDataModel>();
@@ -22,7 +20,7 @@ namespace DCSB
         public HomePage()
         {
             InitializeComponent();
-            
+            Init();
             string selectSql = "SELECT * FROM T_DCData";
             this.Load += (S, E) =>
             {
@@ -53,25 +51,31 @@ namespace DCSB
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             //下一个
-            panel1.Visible = false;
-            MoveNext();
+            if (!IsAuto)
+            {
+                panel1.Visible = false;
+                MoveNext();
+            }
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             //上一个
-            panel1.Visible = false;
-            if (CurrentCK != null)
+            if (!IsAuto)
             {
-                int index = CurrentCK.IndexOf(CurrentDC);
-                if (index >= 1)
+                panel1.Visible = false;
+                if (CurrentCK != null)
                 {
-                    //上一个
-                    CurrentDC = CurrentCK[index - 1];
-                }
-                else
-                {
-                    MessageBox.Show("已经是第一个!");                                            
+                    int index = CurrentCK.IndexOf(CurrentDC);
+                    if (index >= 1)
+                    {
+                        //上一个
+                        CurrentDC = CurrentCK[index - 1];
+                    }
+                    else
+                    {
+                        MessageBox.Show("已经是第一个!");
+                    }
                 }
             }
         }
@@ -186,7 +190,14 @@ namespace DCSB
             {
                 int index = CurrentCK.IndexOf(CurrentDC);
                 CurrentDC.CK = JudgeCK();
-                SetDCCK(CurrentDC.CK);
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action(()=>SetDCCK(CurrentDC.CK)));
+                }
+                else
+                {
+                    SetDCCK(CurrentDC.CK);
+                }
                 SaveDC();
                 if (index < CurrentCK.Count - 1)
                 {
@@ -194,8 +205,9 @@ namespace DCSB
                     CurrentDC = CurrentCK[index + 1];                    
                 }
                 else
-                {                    
-                    if (MessageBox.Show("导入的词库已经学习完毕, 是否重新浏览该词库 ?", "提醒", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                {
+                    关闭ToolStripMenuItem_Click(null, null);
+                    if (MessageBox.Show("词库已经学习完毕, 是否重新浏览该词库 ?", "提醒", MessageBoxButtons.OKCancel) == DialogResult.OK)
                     {                     
                         CurrentDC = CurrentCK[0];
                     }
@@ -247,5 +259,39 @@ namespace DCSB
         }
         public List<NBDataModel> CurrentNBList = new List<NBDataModel>();
 
+        #region 自动换词   
+
+        bool IsAuto = false;
+        int Interval = 10;
+
+        void Init()
+        {
+            this.AutoIntervalList.SelectedIndex = 0;
+            关闭ToolStripMenuItem_Click(null, null);
+            timer1.Tick += (S, E) => MoveNext();
+        }
+
+        private void 打开ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer1.Start();
+            IsAuto = true;
+            打开ToolStripMenuItem.Checked = true;
+            关闭ToolStripMenuItem.Checked = false;
+        }
+
+        private void 关闭ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer1.Stop();
+            IsAuto = false;
+            打开ToolStripMenuItem.Checked = false;
+            关闭ToolStripMenuItem.Checked = true;
+        }
+
+        private void toolStripTextBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Interval = int.Parse(AutoIntervalList.SelectedItem.ToString().Replace("s", "").Trim());
+            timer1.Interval = Interval * 1000;
+        }
+        #endregion
     }
 }

@@ -28,5 +28,10 @@ namespace DCSB
         {
             groupBox2.Enabled = radioButton1.Checked;
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

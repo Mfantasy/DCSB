@@ -12,7 +12,7 @@ namespace DCSB
 {
     class DAL
     {        
-        public static void SaveData(NBDataModel dm)
+        public static void SaveNBData(NBDataModel dm)
         {            
             string col = "DateTime";
             string row = "'"+dm.DateTime+"'";
