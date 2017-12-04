@@ -1,4 +1,4 @@
-﻿namespace DCSB
+﻿namespace IM
 {
     partial class SerialPortConfigForm
     {
@@ -301,7 +301,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SerialPortConfigForm";
             this.Padding = new System.Windows.Forms.Padding(6);
-            this.Text = "SerialPortConfigForm";
+            this.Text = "串口配置";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

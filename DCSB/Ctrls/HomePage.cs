@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using System.Configuration;
 
-namespace DCSB
+namespace IM
 {
     public partial class HomePage : UserControl
     { 
@@ -17,6 +18,7 @@ namespace DCSB
         List<DCDataModel> scck = new List<DCDataModel>();
         List<DCDataModel> mhck = new List<DCDataModel>();
         List<DCDataModel> sxck = new List<DCDataModel>();
+        List<DCDataModel> drck = new List<DCDataModel>();
         public HomePage()
         {
             InitializeComponent();
@@ -34,6 +36,9 @@ namespace DCSB
                     totalck.Add(dc);
                     switch (dc.CK)
                     {
+                        case 0:
+                            drck.Add(dc);
+                            break;
                         case 1:
                             mhck.Add(dc);
                             break;
@@ -47,7 +52,13 @@ namespace DCSB
                 }
             };
         }
-            
+
+        void RefreshLocation()
+        {
+            button2.Location = new Point(label1.Location.X, button2.Location.Y );
+            button3.Location = new Point(label1.Location.X+label1.Width-button3.Width, button3.Location.Y);
+        }
+        
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             //下一个
@@ -93,7 +104,7 @@ namespace DCSB
                 CurrentDC = CurrentCK[0];
                 label3.Visible = false;
                 panel1.Visible = false;
-                label1.Visible = true;
+                panel2.Visible = true;
                 button1.Visible = true;
             }
             else
@@ -101,7 +112,7 @@ namespace DCSB
                 MessageBox.Show("暂无数据!");
             }
         }
-
+        public MainForm mfm { get; set; }
         public List<DCDataModel> CurrentCK { get; set; }
         private DCDataModel currentDC;
 
@@ -112,6 +123,7 @@ namespace DCSB
                 label1.ForeColor = Color.Black;
                 label1.Text = currentDC.English;
                 label2.Text = currentDC.Chinese;
+                RefreshLocation();
             }
         }
 
@@ -217,27 +229,44 @@ namespace DCSB
 
         public void ShowMH()
         {
+            RefreshCK();
             LoadCK(mhck);
         }
         public void ShowSX()
         {
+            RefreshCK();
             LoadCK(sxck);
         }
         public void ShowSC()
         {
+            RefreshCK();
             LoadCK(scck);
+        }
+        public void ShowDR()
+        {
+            RefreshCK();
+            LoadCK(drck);
+        }
+        /// <summary>
+        /// 保存导入的单词
+        /// </summary>        
+        public void SaveDRDC(DCDataModel dc)
+        {
+            if (!totalck.Exists(c => c.English == dc.English))
+            {
+                totalck.Add(dc);
+                drck.Add(dc);
+                DAL.SaveDC(dc);
+            }
         }
 
         public void SaveDC()
         {
             DCDataModel dc = totalck.Find(c => c.English == CurrentDC.English);
             if (dc != null)
-            {
-                if (dc.CK != CurrentDC.CK)
-                {
-                    dc.CK = CurrentDC.CK;
-                    DAL.UpdateDC(dc);
-                }
+            {                
+                dc.CK = CurrentDC.CK;
+                DAL.UpdateDC(dc);
             }
             else
             {
@@ -257,6 +286,33 @@ namespace DCSB
                 DAL.SaveDC(CurrentDC);
             }
         }
+
+        void RefreshCK()
+        {
+            scck.Clear();
+            mhck.Clear();
+            sxck.Clear();
+            drck.Clear();
+            foreach (DCDataModel dc in totalck)
+            {
+                switch (dc.CK)
+                {
+                    case 0:
+                        drck.Add(dc);
+                        break;
+                    case 1:
+                        mhck.Add(dc);
+                        break;
+                    case 2:
+                        scck.Add(dc);
+                        break;
+                    case 3:
+                        sxck.Add(dc);
+                        break;
+                }
+            }  
+        }
+
         public List<NBDataModel> CurrentNBList = new List<NBDataModel>();
 
         #region 自动换词   
@@ -266,6 +322,21 @@ namespace DCSB
 
         void Init()
         {
+            this.AutoIntervalList.Items.Clear();
+            string listStr = ConfigurationManager.AppSettings["autoList"];
+            List<string> intervalStrs = new List<string>();
+            if (!string.IsNullOrWhiteSpace(listStr))
+            {
+                string[] strs = listStr.Split(',');
+                foreach (string str in strs)
+                {
+                    if (!string.IsNullOrWhiteSpace(str))
+                    {
+                        this.AutoIntervalList.Items.Add(str + "s");
+                    }
+                }
+            }
+                                                
             this.AutoIntervalList.SelectedIndex = 0;
             关闭ToolStripMenuItem_Click(null, null);
             timer1.Tick += (S, E) => MoveNext();
@@ -293,5 +364,11 @@ namespace DCSB
             timer1.Interval = Interval * 1000;
         }
         #endregion
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            //启动
+            mfm.Connect(true);
+        }
     }
 }

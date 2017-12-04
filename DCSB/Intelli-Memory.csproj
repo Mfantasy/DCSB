@@ -141,6 +141,12 @@
     <Compile Include="SerialPortConfigForm.Designer.cs">
       <DependentUpon>SerialPortConfigForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SoftConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SoftConfigForm.Designer.cs">
+      <DependentUpon>SoftConfigForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="SqlLiteHelper.cs" />
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
@@ -170,6 +176,9 @@
     </Compile>
     <EmbeddedResource Include="SerialPortConfigForm.resx">
       <DependentUpon>SerialPortConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SoftConfigForm.resx">
+      <DependentUpon>SoftConfigForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="dll\Net ThinkGear开发指南%28中文版%29.pdf" />
     <None Include="dll\NLog.config" />

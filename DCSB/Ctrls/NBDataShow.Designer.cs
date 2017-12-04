@@ -1,4 +1,4 @@
-﻿namespace DCSB.Ctrls
+﻿namespace IM.Ctrls
 {
     partial class NBDataShow
     {

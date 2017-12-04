@@ -1,4 +1,4 @@
-﻿namespace DCSB
+﻿namespace IM
 {
     partial class AboutBox1
     {

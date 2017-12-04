@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace DCSB
+namespace IM
 {
     public class NBDataModel
     {
@@ -18,11 +18,7 @@ namespace DCSB
         /// <summary>
         /// 原始EEG数据
         /// </summary>
-        public string Raw { get; set; }        
-        /// <summary>
-        /// 性能区域
-        /// </summary>
-        public string Zone { get; set; }
+        public string Raw { get; set; }              
         /// <summary>
         /// Noise 等于0其他数据才有效
         /// </summary>
@@ -40,13 +36,17 @@ namespace DCSB
         /// </summary>
         public string BlinkStrength { get; set; } //if (setBlinkDetectionEnabled(true))
         /// <summary>
-        /// 脑力劳动
-        /// </summary>
-        public string MentalEffort { get; set; } // if (setMentalEffortEnable(true))    算法连续运行 if (setMentalEffortRunContinuous(true))
-        /// <summary>
         /// 熟练度
         /// </summary>
         public string TaskFamiliarity { get; set; } //if (setTaskFamiliarityEnable(true)) setTaskFamiliarityRunContinuous(true)
+        /// <summary>
+        /// 性能区域
+        /// </summary>
+        public string Zone { get; set; }
+        /// <summary>
+        /// 脑力劳动
+        /// </summary>
+        public string MentalEffort { get; set; } // if (setMentalEffortEnable(true))    算法连续运行 if (setMentalEffortRunContinuous(true))        
 
         //积极性:目前这个功能还不可用
         //public string Positivity { get; set; } //*        
@@ -68,7 +68,7 @@ namespace DCSB
     public class DCDataModel
     {        
         /// <summary>
-        /// 0代表未收录,1代表模糊,2代表生词,3代表熟悉
+        /// 0代表导入的词库,1代表模糊,2代表生词,3代表熟悉
         /// </summary>
         public int CK { get; set; }
         

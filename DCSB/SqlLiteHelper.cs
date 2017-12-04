@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DCSB
+namespace IM
 {
     public static class SqlLiteHelper
     {

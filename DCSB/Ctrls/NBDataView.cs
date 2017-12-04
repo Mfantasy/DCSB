@@ -8,11 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace DCSB.Ctrls
+namespace IM.Ctrls
 {
     public partial class NBDataView : UserControl
-    {
-        string db = "nbdata.db";
+    {     
         string selectSql = "SELECT * FROM T_NBData";
         DataTable dt;
         public List<NBDataModel> nlist;
@@ -32,6 +31,17 @@ namespace DCSB.Ctrls
             foreach (DataRow r in dt.Rows)
             {
                 NBDataModel nbd = new NBDataModel();
+                if (r["PoorSignal"] is DBNull)
+                {
+                    continue;
+                }
+                if (!(r["PoorSignal"] is DBNull))
+                {
+                    if (string.IsNullOrWhiteSpace(r["PoorSignal"].ToString()) || int.Parse(r["PoorSignal"].ToString()) > 50)
+                    {
+                        continue;
+                    }
+                }                
                 nlist.Add(nbd);
                 if (!(r["DateTime"] is DBNull))
                 {
@@ -62,11 +72,11 @@ namespace DCSB.Ctrls
             chart1.Series[1].Points.DataBind(nlist, "DateTime", "Attention", "");
             chart1.Series[2].Points.DataBind(nlist, "DateTime", "Meditation", "");
             
-            chart2.Series[0].Points.DataBind(nlist, "DateTime", "MentalEffort", "");
-            chart2.Series[1].Points.DataBind(nlist, "DateTime", "TaskFamiliarity", "");
+            //chart2.Series[0].Points.DataBind(nlist, "DateTime", "MentalEffort", "");
+            //chart2.Series[1].Points.DataBind(nlist, "DateTime", "TaskFamiliarity", "");
 
             chart1.ChartAreas[0].RecalculateAxesScale();
-            chart2.ChartAreas[0].RecalculateAxesScale();
+            //chart2.ChartAreas[0].RecalculateAxesScale();
         }
         
     }

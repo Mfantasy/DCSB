@@ -1,4 +1,4 @@
-﻿namespace DCSB
+﻿namespace IM
 {
     partial class MainForm
     {
@@ -46,9 +46,11 @@
             this.关于ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.tLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.导入的词库ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -63,7 +65,8 @@
             this.toolStripMenuItem2,
             this.toolStripMenuItem4,
             this.关于ToolStripMenuItem,
-            this.帮助ToolStripMenuItem});
+            this.帮助ToolStripMenuItem,
+            this.设置ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 1, 0, 1);
@@ -90,7 +93,8 @@
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.模糊词库ToolStripMenuItem,
             this.生词词库ToolStripMenuItem,
-            this.熟悉词库ToolStripMenuItem});
+            this.熟悉词库ToolStripMenuItem,
+            this.导入的词库ToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(68, 22);
             this.toolStripMenuItem1.Text = "历史词库";
@@ -98,21 +102,21 @@
             // 模糊词库ToolStripMenuItem
             // 
             this.模糊词库ToolStripMenuItem.Name = "模糊词库ToolStripMenuItem";
-            this.模糊词库ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.模糊词库ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.模糊词库ToolStripMenuItem.Text = "模糊词库";
             this.模糊词库ToolStripMenuItem.Click += new System.EventHandler(this.模糊词库ToolStripMenuItem_Click);
             // 
             // 生词词库ToolStripMenuItem
             // 
             this.生词词库ToolStripMenuItem.Name = "生词词库ToolStripMenuItem";
-            this.生词词库ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.生词词库ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.生词词库ToolStripMenuItem.Text = "生词词库";
             this.生词词库ToolStripMenuItem.Click += new System.EventHandler(this.生词词库ToolStripMenuItem_Click);
             // 
             // 熟悉词库ToolStripMenuItem
             // 
             this.熟悉词库ToolStripMenuItem.Name = "熟悉词库ToolStripMenuItem";
-            this.熟悉词库ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.熟悉词库ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.熟悉词库ToolStripMenuItem.Text = "熟悉词库";
             this.熟悉词库ToolStripMenuItem.Click += new System.EventHandler(this.熟悉词库ToolStripMenuItem_Click);
             // 
@@ -195,12 +199,6 @@
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // tLabel1
-            // 
-            this.tLabel1.Name = "tLabel1";
-            this.tLabel1.Size = new System.Drawing.Size(44, 17);
-            this.tLabel1.Text = "未连接";
-            // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
@@ -213,6 +211,26 @@
             this.toolStripStatusLabel2.Size = new System.Drawing.Size(724, 17);
             this.toolStripStatusLabel2.Spring = true;
             this.toolStripStatusLabel2.Text = " ";
+            // 
+            // tLabel1
+            // 
+            this.tLabel1.Name = "tLabel1";
+            this.tLabel1.Size = new System.Drawing.Size(44, 17);
+            this.tLabel1.Text = "未连接";
+            // 
+            // 设置ToolStripMenuItem
+            // 
+            this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
+            this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 22);
+            this.设置ToolStripMenuItem.Text = "设置";
+            this.设置ToolStripMenuItem.Visible = false;
+            // 
+            // 导入的词库ToolStripMenuItem
+            // 
+            this.导入的词库ToolStripMenuItem.Name = "导入的词库ToolStripMenuItem";
+            this.导入的词库ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.导入的词库ToolStripMenuItem.Text = "导入的词库";
+            this.导入的词库ToolStripMenuItem.Click += new System.EventHandler(this.导入的词库ToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -256,6 +274,8 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel tLabel1;
+        private System.Windows.Forms.ToolStripMenuItem 设置ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 导入的词库ToolStripMenuItem;
     }
 }
 
