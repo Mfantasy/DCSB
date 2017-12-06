@@ -122,8 +122,7 @@ namespace IM
             set { currentDC = value;
                 label1.ForeColor = Color.Black;
                 label1.Text = currentDC.English;
-                label2.Text = currentDC.Chinese;
-                RefreshLocation();
+                label2.Text = currentDC.Chinese;                
             }
         }
 
@@ -369,6 +368,20 @@ namespace IM
         {
             //启动
             mfm.Connect(true);
+        }
+
+        private void HomePage_Resize(object sender, EventArgs e)
+        {
+            if (label3.Visible)
+            {
+                label3.Left = (this.ClientRectangle.Width - label3.Width) / 2;
+            }
+        }
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            //断开
+            mfm.DisConnect();
         }
     }
 }

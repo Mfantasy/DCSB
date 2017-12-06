@@ -21,29 +21,42 @@ namespace IM
     {
         static Connector connector;
 
-        bool golfZoneDemo = false;
+        
         double task_famil_baseline, task_famil_cur, task_famil_change;
         bool task_famil_first;
         double mental_eff_baseline, mental_eff_cur, mental_eff_change;
         bool mental_eff_first;
         Thread th;//连接线程
         bool IsReconnect = false; //判断设备是否进行过重连
-        bool CanManualStart = true;
+        bool CanManualStart = true; //判断设备能不能手动开始连接
+        bool DisConManual = false; //判断设备是不是通过手动断开
         public MainForm()
         {
             InitializeComponent();
+            //connector.Disconnect();
             Init();
             Console.WriteLine("OK");
             this.FormClosing += (S, E) => { if (connector != null) connector.Close(); };           
         }
 
+        public void DisConnect()
+        {
+            if (connector != null && connector.AvailableConnections.Count() > 0)
+            {
+                DisConManual = true;
+                CanManualStart = true;
+                connector.Disconnect();
+            }
+        }
+
         //连接 或 重置
         public void Connect(bool byHand)
-        {
+        {            
             if (byHand)
             {
                 if (CanManualStart)
                 {
+                    DisConManual = false;
                     CanManualStart = false;
                 }
                 else
@@ -106,6 +119,11 @@ namespace IM
         void OnDeviceDisconnect(object sender, EventArgs e)
         {
             //设备断开先尝试重连,如果失败则提示重连失败,请手动连接            
+            if (DisConManual)
+            {
+                this.Invoke(new Action(() => tLabel1.Text = "连接已断开"));
+                return;
+            }
             this.Invoke(new Action(() =>
             {
                 tLabel1.Text = "连接断开,正在尝试重连";
